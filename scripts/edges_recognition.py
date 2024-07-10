@@ -8,7 +8,7 @@ from collections import defaultdict
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import matplotlib.pyplot as plt
 
-from bld import Trainer
+from sctools.bld import Trainer
 
 def show_plot(fig):
     # Convert plot to PNG image

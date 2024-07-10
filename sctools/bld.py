@@ -5,10 +5,7 @@ import matplotlib.patches as patches
 from matplotlib.figure import Figure
 from typing import Tuple
 
-colors = ["red", "blue", "white", "green", "yellow", "orange"]
-color_encoder = {i: k for i, k in enumerate(colors)}
-
-bld_cfg_edges = {
+BLD_CFG_EDGES = {
     "start": {
         "U": "red",
         "L": "blue",
@@ -27,14 +24,14 @@ bld_cfg_edges = {
     ]
 }
 
-_pos_to_memo = dict(zip(bld_cfg_edges["memo_schema"], string.ascii_uppercase))
-_pair_to_memo = {(bld_cfg_edges["start"][k[0]], bld_cfg_edges["start"][k[1]]): v for k, v in _pos_to_memo.items()}
-_idx_to_pair = dict(zip(range(0, 24), _pair_to_memo.keys()))
+_POS_TO_MEMO = dict(zip(BLD_CFG_EDGES["memo_schema"], string.ascii_uppercase))
+_PAIR_TO_MEMO = {(BLD_CFG_EDGES["start"][k[0]], BLD_CFG_EDGES["start"][k[1]]): v for k, v in _POS_TO_MEMO.items()}
+_IDX_TO_PAIR = dict(zip(range(0, 24), _PAIR_TO_MEMO.keys()))
 
 BLD_EDGES_ENCODER = dict(
-    pos_to_memo=_pos_to_memo, 
-    pair_to_memo=_pair_to_memo,
-    idx_to_pair=_idx_to_pair,
+    pos_to_memo=_POS_TO_MEMO, 
+    pair_to_memo=_PAIR_TO_MEMO,
+    idx_to_pair=_IDX_TO_PAIR,
 )
 
 class Trainer:
