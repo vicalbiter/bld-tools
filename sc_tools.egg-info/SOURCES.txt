@@ -1,8 +1,0 @@
-setup.py
-sc_tools.egg-info/PKG-INFO
-sc_tools.egg-info/SOURCES.txt
-sc_tools.egg-info/dependency_links.txt
-sc_tools.egg-info/requires.txt
-sc_tools.egg-info/top_level.txt
-sctools/__init__.py
-sctools/bld.py
