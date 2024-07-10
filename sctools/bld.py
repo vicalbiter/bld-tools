@@ -136,9 +136,9 @@ class Trainer:
         right_face = [(1, 0.75), (1, 0.25), (0.5, 0), (0.5, 0.5)]
 
         # Draw each face
-        ax.add_patch(Polygon(top_face, closed=True, edgecolor='black', facecolor=corner[0], alpha=0.8))
-        ax.add_patch(Polygon(left_face, closed=True, edgecolor='black', facecolor=corner[2], alpha=0.5))
-        ax.add_patch(Polygon(right_face, closed=True, edgecolor='black', facecolor=corner[1], alpha=0.5))
+        ax.add_patch(Polygon(top_face, closed=True, edgecolor='black', facecolor=corner[0], alpha=1))
+        ax.add_patch(Polygon(right_face, closed=True, edgecolor='black', facecolor=corner[1], alpha=1))
+        ax.add_patch(Polygon(left_face, closed=True, edgecolor='black', facecolor=corner[2], alpha=1))
 
         # Remove axis ticks
         ax.set_xticks([])
