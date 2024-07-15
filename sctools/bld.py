@@ -29,7 +29,7 @@ BLD_CFG = {
         "ULB", "UBR", "URF", "UFL",
         "LBU", "LUF", "LFD", "LDB",
         "FLU", "FUR", "FRD", "FDL",
-        "RFU", "RUB", "RDF", "RBD",
+        "RFU", "RUB", "RBD", "RDF",
         "BRU", "BUL", "BLD", "BDR",
         "DLF", "DFR", "DRB", "DBL"
     ]
