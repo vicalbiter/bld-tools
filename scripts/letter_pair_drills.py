@@ -3,6 +3,8 @@ import csv
 import random
 import argparse
 import pandas as pd
+from datetime import datetime
+import time
 
 def create_groups(excel_path: str, output_directory: str):
     """Create individual groups CSVs"""
@@ -67,42 +69,82 @@ def compare_answers(correct, user_input):
     user_set = set(user_input.lower().replace(" ", ""))
     return correct_set == user_set
 
-def drill_groups(word_pairs, n_master):
+def create_log_file():
+    # Get the directory of the current script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    
+    logs_dir = os.path.join(parent_dir, 'logs')
+    
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = os.path.join(logs_dir, f"bld_pairs_session_{timestamp}.csv")
+    
+    with open(log_file, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Timestamp", "Letter Pair", "Correct Image", "User Input", "Is Correct", "Response Time (s)"])
+    
+    return log_file
+
+def drill_groups(word_pairs, n_master, log_file):
     active_pairs = list(word_pairs.keys())
-    while active_pairs:
-        pair = random.choice(active_pairs)
-        print(f"\nLetter pair: {pair}")
-        user_answer = input("Your answer: ").strip()
-        
-        if user_answer.lower() == 'quit':
-            return
-        
-        correct_answer = word_pairs[pair]['image']
-        if compare_answers(correct_answer, user_answer):
-            print("Correct!")
-            word_pairs[pair]['counter'] += 1
-            if word_pairs[pair]['counter'] == n_master:
-                print(f"You've mastered '{pair}'!")
-                active_pairs.remove(pair)
-        else:
-            print(f"Incorrect. The correct answer is: {correct_answer}")
-            word_pairs[pair]['counter'] = 0
+    with open(log_file, 'a', newline='') as file:
+        csv_writer = csv.writer(file)
+        while active_pairs:
+            pair = random.choice(active_pairs)
+            print(f"\nLetter pair: {pair}")
+            
+            start_time = time.time()
+            user_answer = input("Your answer: ").strip()
+            end_time = time.time()
+            
+            response_time = end_time - start_time
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            if user_answer.lower() == 'quit':
+                return
+            
+            correct_answer = word_pairs[pair]['image']
+            is_correct = compare_answers(correct_answer, user_answer)
+            
+            if is_correct:
+                print(f"Correct! (t: {response_time:.1f}s)")
+                word_pairs[pair]['counter'] += 1
+                if word_pairs[pair]['counter'] == n_master:
+                    print(f"You've mastered '{pair}'!")
+                    active_pairs.remove(pair)
+            else:
+                print(f"Incorrect. The correct answer is: {correct_answer} (t: {response_time:.1f}s)")
+                word_pairs[pair]['counter'] = 0
+            
+            csv_writer.writerow([timestamp, pair, correct_answer, user_answer, is_correct, f"{response_time:.3f}"])
+
 
 def main():
+
+    # Parse user arguments
     parser = argparse.ArgumentParser(description="BLD Pairs Drilling Program")
     parser.add_argument("--n_master", type=int, default=3, help="Number of correct answers required for mastery")
+    parser.add_argument("--no-log", action="store_true", help="Disable logging for this session")
     args = parser.parse_args()
     
     directory = "C:\\Users\\Vicente\\Documents\\Projects\\cubing\\sc-tools\\docs\\groups"
     excel_path = os.path.join(directory, "Bld Pairs.xlsx")
     
- # Create CSV files from Excel
+    # Create CSV files from Excel
     create_groups(excel_path, directory)
-    
-    # Load CSV files
     csv_files = load_csv_files(directory)
     
     print(f"Mastery requires {args.n_master} correct answers")
+    
+    log_file = None
+    if not args.no_log:
+        log_file = create_log_file()
+        print(f"Logging this session to: {log_file}")
+    else:
+        print("Logging is disabled for this session.")
     
     while True:
         print("\nAvailable groups:", ", ".join(sorted(csv_files.keys())))
@@ -122,7 +164,7 @@ def main():
         
         selected_files = [csv_files[group] for group in valid_groups]
         word_pairs = load_word_pairs(selected_files)
-        drill_groups(word_pairs, args.n_master)
+        drill_groups(word_pairs, args.n_master, log_file)
 
 if __name__ == "__main__":
     main()
